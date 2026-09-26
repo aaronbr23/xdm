@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <InvariantGlobalization>true</InvariantGlobalization>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>Link</TrimMode>
@@ -63,33 +63,6 @@
     <Content Include="..\Lang\*.*" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" LinkBase="Lang\" />
     <None Remove="images\extension-folder.jpg" />
     <Content Include="..\xdm-logo.svg" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AtkSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\AtkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="CairoSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\CairoSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GdkSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\GdkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GioSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\GioSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GLibSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\GLibSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GtkSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\GtkSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="GtkSourceSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\GtkSourceSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="PangoSharp">
-      <HintPath>D:\gtksharp\GtkSharp-master\BuildOutput\Release\PangoSharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
