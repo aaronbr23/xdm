@@ -3,8 +3,7 @@ services:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
-    ports:
-      - "127.0.0.1:8597:8597"
+    network_mode: host
     volumes:
       - xdm-app-data:/root/.xdm-app-data
       - ${DOWNLOAD_DIR}:/root/Downloads

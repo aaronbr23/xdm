@@ -41,3 +41,8 @@ entpackte Erweiterung laden (`chrome://extensions` -> Entwicklermodus ->
   pruefen. Mount-Pfad im Container ist `/root/Downloads`.
 - **Port 8597 bereits belegt**: laeuft evtl. ein weiterer XDM-Prozess lokal
   auf dem Server.
+- **Curl schlaegt fehl mit "connection reset"**: `xdm-app` bindet intern
+  strikt auf `127.0.0.1` (siehe `XDM.Core/BrowserMonitoring/
+  IpcHttpMessageProcessor.cs`). Deshalb laeuft der Service mit
+  `network_mode: host` statt Port-Publishing — Docker-NAT auf die
+  Container-IP wuerde den Container-eigenen Loopback nie erreichen.
