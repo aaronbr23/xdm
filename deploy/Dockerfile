@@ -9,7 +9,7 @@ RUN dotnet publish app/XDM/XDM.Gtk.UI/XDM.Gtk.UI.csproj \
 
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgtk-3-0 ffmpeg xvfb ca-certificates \
+    libgtk-3-0 librsvg2-common ffmpeg xvfb ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=build /out /app
 COPY deploy/entrypoint.sh /entrypoint.sh
