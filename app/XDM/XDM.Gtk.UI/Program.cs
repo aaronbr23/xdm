@@ -20,6 +20,9 @@ namespace XDM.GtkUI
         static void Main(string[] args)
         {
             Config.LoadConfig();
+            // Headless-Deployment: kein Display fuer den Video-Download-Bestaetigungsdialog
+            // vorhanden, daher Downloads immer automatisch starten statt auf Klick zu warten.
+            Config.Instance.StartDownloadAutomatically = true;
             var debugMode = Environment.GetEnvironmentVariable("XDM_DEBUG_MODE");
             if (!string.IsNullOrEmpty(debugMode) && debugMode == "1")
             {

@@ -46,3 +46,9 @@ entpackte Erweiterung laden (`chrome://extensions` -> Entwicklermodus ->
   IpcHttpMessageProcessor.cs`). Deshalb laeuft der Service mit
   `network_mode: host` statt Port-Publishing — Docker-NAT auf die
   Container-IP wuerde den Container-eigenen Loopback nie erreichen.
+- **Klick auf Download-Item im Popup tut nichts**: Normal zeigt XDM vor jedem
+  Video-Download einen Bestaetigungsdialog (GTK-Fenster). Headless ohne
+  Display bleibt der fuer immer unsichtbar offen, Download startet nie.
+  Deshalb erzwingt `XDM.Gtk.UI/Program.cs` beim Start
+  `Config.Instance.StartDownloadAutomatically = true` — Downloads starten
+  sofort ohne Bestaetigung. Betrifft nur diesen Fork/Headless-Build.
