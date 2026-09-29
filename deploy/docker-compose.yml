@@ -4,6 +4,8 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile
     network_mode: host
+    environment:
+      - XDM_DEBUG_MODE=1
     volumes:
       - xdm-app-data:/root/.xdm-app-data
       - ${DOWNLOAD_DIR}:/root/Downloads
