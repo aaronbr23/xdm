@@ -111,6 +111,28 @@ namespace XDM.Core.DataAccess
             }
         }
 
+        // Downloads that were queued or running when the process died (status is only
+        // reset to Stopped on fail/cancel), oldest first so the queue keeps its order.
+        public List<string> GetWaitingDownloadIds()
+        {
+            var ids = new List<string>();
+            lock (db)
+            {
+                try
+                {
+                    using var cmd = new SQLiteCommand("SELECT id FROM downloads WHERE completed=0 AND status=@status ORDER BY date_added", db);
+                    SetParam("@status", (int)DownloadStatus.Waiting, cmd.Parameters);
+                    using var r = cmd.ExecuteReader();
+                    while (r.Read()) ids.Add(r.GetSafeString(0));
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug(ex, ex.Message);
+                }
+            }
+            return ids;
+        }
+
         public DownloadItemBase? GetDownloadById(string id)
         {
             lock (db)

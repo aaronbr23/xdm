@@ -23,6 +23,8 @@ namespace XDM.GtkUI
             // Headless-Deployment: kein Display fuer den Video-Download-Bestaetigungsdialog
             // vorhanden, daher Downloads immer automatisch starten statt auf Klick zu warten.
             Config.Instance.StartDownloadAutomatically = true;
+            // Server: Downloads strikt nacheinander abarbeiten, um Netzwerk und Server zu schonen.
+            Config.Instance.MaxParallelDownloads = 1;
             var debugMode = Environment.GetEnvironmentVariable("XDM_DEBUG_MODE");
             if (!string.IsNullOrEmpty(debugMode) && debugMode == "1")
             {
@@ -114,6 +116,9 @@ namespace XDM.GtkUI
             Log.Debug("Processing arguments...");
 
             ArgsProcessor.Process(args);
+
+            // Warteschlange nach Neustart wiederherstellen (headless: niemand klickt auf Fortsetzen).
+            ApplicationContext.CoreService.ResumeNonInteractiveDownloads(AppDB.Instance.Downloads.GetWaitingDownloadIds());
 
             Log.Debug("Gtk Run...");
 

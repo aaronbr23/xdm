@@ -137,6 +137,10 @@ namespace XDM.Core
             var id = download.Id;
             var startType = DownloadStartType.Waiting;
 
+            // Browser messages arrive on parallel threads; without the lock two downloads
+            // can both see a free slot and run concurrently despite MaxParallelDownloads.
+            lock (this)
+            {
             if (!startImmediately)
             {
                 startType = DownloadStartType.Stopped;
@@ -146,6 +150,11 @@ namespace XDM.Core
                 startImmediately = false;
                 queuedDownloads.Add(id, false);
             }
+            else
+            {
+                this.liveDownloads.Add(download.Id, new KeyValuePair<IBaseDownloader, bool>(download, false));
+            }
+            }
 
             ApplicationContext.Application.AddItemToTop(id, download.TargetFileName, targetDir, DateTime.Now,
                 download.FileSize, download.Type, download.FileNameFetchMode,
@@ -154,7 +163,6 @@ namespace XDM.Core
 
             if (startImmediately)
             {
-                this.liveDownloads.Add(download.Id, new KeyValuePair<IBaseDownloader, bool>(download, false));
                 download.Started += HandleDownloadStart;
                 download.Probed += HandleProbeResult;
                 download.Finished += DownloadFinished;
@@ -258,7 +266,12 @@ namespace XDM.Core
 
             foreach (var item in list)
             {
-                if (liveDownloads.ContainsKey(item.Key) || queuedDownloads.ContainsKey(item.Key)) return;
+                // Persist the queued state so the download is picked up again after a restart
+                AppDB.Instance.Downloads.UpdateDownloadStatus(item.Key, DownloadStatus.Waiting);
+                IBaseDownloader? download = null;
+                lock (this)
+                {
+                if (liveDownloads.ContainsKey(item.Key) || queuedDownloads.ContainsKey(item.Key)) continue;
                 if (liveDownloads.Count >= Config.Instance.MaxParallelDownloads)
                 {
                     queuedDownloads.Add(item.Key, nonInteractive);
@@ -269,7 +282,6 @@ namespace XDM.Core
                     });
                     continue;
                 }
-                IBaseDownloader? download = null;
                 switch (item.Value.DownloadType)
                 {
                     case "Http":
@@ -291,6 +303,8 @@ namespace XDM.Core
                     default:
                         continue;
                 }
+                liveDownloads[item.Key] = new KeyValuePair<IBaseDownloader, bool>(download, nonInteractive);
+                }
                 download.Started += HandleDownloadStart;
                 download.Probed += HandleProbeResult;
                 download.Finished += DownloadFinished;
@@ -300,7 +314,6 @@ namespace XDM.Core
                 download.Failed += DownloadFailed;
                 download.SetTargetDirectory(item.Value.TargetDir);
                 download.SetFileName(item.Value.Name, item.Value.FileNameFetchMode);
-                liveDownloads[item.Key] = new KeyValuePair<IBaseDownloader, bool>(download, nonInteractive);
 
                 var showProgressWindow = Config.Instance.ShowProgressWindow;
                 if (showProgressWindow && !nonInteractive)
@@ -319,7 +332,7 @@ namespace XDM.Core
                         prgWin.ShowProgressWindow();
                     });
                 }
-                liveDownloads[item.Key].Key.Resume();
+                download.Resume();
             }
         }
 
